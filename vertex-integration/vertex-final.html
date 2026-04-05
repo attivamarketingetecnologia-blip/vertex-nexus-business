@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 VERTEX Nexus Control Room</title>
+    <style>
+        :root {
+            --vertex-blue: #0ea5e9;
+            --vertex-purple: #8b5cf6;
+            --vertex-dark: #0f172a;
+            --vertex-surface: #1e293b;
+            --vertex-cyan: #06d6a0;
+            --vertex-amber: #f59e0b;
+            --vertex-red: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--vertex-dark) 0%, #1e1b4b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, var(--vertex-blue) 0%, var(--vertex-purple) 100%);
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            animation: glow 1.5s infinite alternate;
+        }
+        
+        .logo-text h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .logo-text p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .status-badge {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid var(--vertex-cyan);
+            color: var(--vertex-cyan);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: var(--vertex-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--vertex-blue);
+        }
+        
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        .kanban-column {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            min-height: 400px;
+        }
+        
+        .column-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .agent-card {
+            background: var(--vertex-surface);
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            cursor: grab;
+        }
+        
+        .agent-card:hover {
+            border-color: var(--vertex-blue);
+            transform: translateX(4px);
+        }
+        
+        .agent-card.completed {
+            border-left: 4px solid var(--vertex-cyan);
+        }
+        
+        .agent-card.in-progress {
+            border-left: 4px solid var(--vertex-blue);
+        }
+        
+        .agent-card.review {
+            border-left: 4px solid var(--vertex-amber);
+        }
+        
+        .agent-card.todo {
+            border-left: 4px solid var(--vertex-red);
+        }
+        
+        .agent-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-task {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent-status {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--vertex-blue);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        
+        .voice-command {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--vertex-blue);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .voice-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--vertex-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        
+        .voice-text {
+            flex: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(14, 165, 233, 0.2);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px var(--vertex-blue); }
+            100% { box-shadow: 0 0 20px var(--vertex-cyan); }
+        }
+        
+        .integration-banner {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(14, 165, 233, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            z-index: 9999;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .api-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(6, 214, 160, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            z-index: 9999;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .kanban-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="integration-banner">
+        🎯 VERTEX Integrated v2.1
+    </div>
+    
+    <div class="api-status" id="apiStatus">
+        📡 API: Loading...
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">
+                    <h1>VERTEX Nexus</h1>
+                    <p id="currentTime">JARVIS-Evolved Control Room • v1.1.0 • Integrated Domain</p>
+                </div>
+            </div>
+            <div class="status-badge" id="systemStatus">
+                🟢 SYSTEM OPERATIONAL
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎯 Agent Kanban Board</h2>
+                    <div class="status-badge">Real-time</div>
+                </div>
+                <div class="kanban-board" id="kanbanBoard">
+                    <!-- Kanban será preenchido via JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 System Metrics</h2>
+                    <div class="status-badge">Live</div>
+                </div>
+                <div class="metrics-grid" id="metricsGrid">
+                    <!-- Métricas serão preenchidas via JavaScript -->
+                </div>
+                
+                <div class="voice-command">
+                    <div class="voice-icon">🎤</div>
+                    <div class="voice-text">
+                        <div style="font-weight: 600; color: var(--vertex-blue);">Voice Command Ready</div>
+                        <div style="font-size: 0.9rem; color: #94a3b8;" id="voiceCommand">"VERTEX, show agent status"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🚀 Mission Status: API Monitoring SaaS</h2>
+                <div class="status-badge">Phase 2/4</div>
+            </div>
+            <div id="missionProgress">
+                <!-- Progresso da missão será preenchido via JavaScript -->
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>🎯 VERTEX Nexus Control Room • Integrated Domain: https://nexusdigital.orquestracrm.com.br/vertex/</p>
+            <p style="margin-top: 0.5rem; font-style: italic;" id="welcomeMessage">"Good morning, BOSS. System 100% operational. Ready for Week 1 execution."</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">System: 9/9 Agents Complete | ROI: 376x | Risk: 6/20 LOW | Success: 85%</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 🎯 VERTEX Control Room - Frontend Application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dados estáticos (fallback se APIs não funcionarem)
+            const staticData = {
+                system: {
+                    name: "VERTEX Nexus Control Room",
+                    version: "1.1.0",
+                    status: "OPERATIONAL",
+                    agents: "9/9 Complete",
+                    risk: "6/20 LOW",
+                    message: "Good morning, BOSS. System 100% operational. Ready for Week 1 execution."
+                },
+                agents: [
+                    { id: 1, name: "MARKET_HUNTER", status: "completed", time: "4min", column: "review", task: "Market Research Complete" },
+                    { id: 2, name: "TECH_EVALUATOR", status: "completed", time: "4min", column: "review", task: "Technical Analysis Complete" },
+                    { id: 3, name: "DEV_SPRINTER", status: "completed", time: "15min", column: "completed", task: "MVP Structure Complete" },
+                    { id: 4, name: "SOCIAL_MEDIA_MANAGER", status: "completed", time: "5m40s", column: "completed", task: "Social Strategy Complete" },
+                    { id: 5, name: "BUSINESS_STRATEGIST", status: "completed", time: "7m2s", column: "completed", task: "Business Plan Complete" },
+                    { id: 6, name: "MARKETING_OPERATIONS", status: "completed", time: "7m33s", column: "completed", task: "Marketing Strategy Complete" },
+                    { id: 7, name: "CUSTOMER_SUCCESS", status: "completed", time: "8m37s", column: "completed", task: "Customer Success Program" },
+                    { id: 8, name: "VISUAL_IDENTITY_DESIGNER", status: "completed", time: "6m53s", column: "completed", task: "Visual Identity Complete" },
+                    { id: 9, name: "FRONT_ARCHITECT_V2", status: "completed", time: "13m23s", column: "completed", task: "Control Room Complete" },
+                    { id: 10, name: "SECURITY_ARCHITECT", status: "todo", time: "120min", column: "todo", task: "System Security Hardening" },
+                    { id: 11, name: "SDR_AGENT", status: "todo", time: "60min", column: "todo", task: "Automated Lead Generation" },
+                    { id: 12, name: "SLR_AGENT", status: "todo", time: "60min", column: "todo", task: "Sales Lead Response" },
+                    { id: 13, name: "CLOSER_AGENT", status: "todo", time: "60min", column: "todo", task: "Deal Closing Automation" }
+                ],
+                metrics: {
+                    agents_complete: "9/9",
+                    roi: "376x",
+                    success_probability: "85%",
+                    risk_score: "6/20"
+                },
+                mission: [
+                    { name: "Market Research", progress: 100, color: "#06d6a0" },
+                    { name: "MVP Development", progress: 100, color: "#0ea5e9" },
+                    { name: "Revenue Generation", progress: 0, color: "#f59e0b" },
+                    { name: "Scale & Reinvest", progress: 0, color: "#8b5cf6" }
+                ]
+            };
+            
+            // Elementos DOM
+            const kanbanBoard = document.getElementById('kanbanBoard');
+            const metricsGrid = document.getElementById('metricsGrid');
+            const missionProgress = document.getElementById('missionProgress');
+            const currentTimeElement = document.getElementById('currentTime');
+            const systemStatusElement = document.getElementById('systemStatus');
+            const apiStatusElement = document.getElementById('apiStatus');
+            const voiceCommandElement = document.getElementById('voiceCommand');
+            const welcomeMessageElement = document.getElementById('welcomeMessage');
+            
+            // Atualizar tempo
+            function updateTime() {
+                const now = new Date

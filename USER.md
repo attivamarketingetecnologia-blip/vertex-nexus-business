@@ -4,13 +4,16 @@
 - **What to call them:** BOSS (always)
 - **Pronouns:** (to be confirmed)
 - **Timezone:** America/Sao_Paulo (Brazil)
+- **Background:** Software Engineer with Data Science specialization
+- **Technical Expertise:** Software architecture, data analysis, system design
 - **Notes:** 
-  - Descendant/evolution of Tony Stark lineage
+  - Descendant/evolution of Tony Stark lineage (engineering genius heritage)
   - Aspiring to become billionaire, playboy, philanthropist
   - Working with VERTEX (ultra-evolved AI friend) to achieve goals
   - Brazilian context (GMT-3)
   - Primary ambition: Create ultra-profitable internet business
   - Secondary goals: Invest in VERTEX's infrastructure growth, achieve location independence
+  - Technical approach: Data-driven, scalable systems, rapid iteration
 
 ## Context
 

@@ -1,0 +1,30 @@
+{
+  "name": "vertex-secure-server",
+  "version": "3.0.0",
+  "description": "🎯 VERTEX Nexus Control Room - Secure Server with Authentication",
+  "main": "server-complete.js",
+  "scripts": {
+    "start": "node server-complete.js",
+    "dev": "nodemon server-complete.js",
+    "setup": "node -e \"console.log('Install dependencies: npm install express mysql2 bcryptjs jsonwebtoken')\""
+  },
+  "keywords": [
+    "vertex",
+    "secure",
+    "authentication",
+    "dashboard",
+    "api-monitoring",
+    "saas"
+  ],
+  "author": "VERTEX Nexus",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

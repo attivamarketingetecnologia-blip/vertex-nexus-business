@@ -1,0 +1,28 @@
+# 🎯 VERTEX Nexus Control Room - Apache Configuration
+# Força todas as requisições para index.php
+
+RewriteEngine On
+RewriteBase /vertex/
+
+# Se o arquivo ou diretório não existir, redireciona para index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Headers personalizados
+Header set X-VERTEX-Integration "DOMAIN-INTEGRATED-v2.1"
+Header set X-VERTEX-Version "1.1.0"
+
+# Cache control para APIs
+<FilesMatch "\.(php)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</FilesMatch>
+
+# CORS para APIs
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>

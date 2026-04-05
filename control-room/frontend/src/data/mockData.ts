@@ -1,0 +1,178 @@
+import { Agent, Mission, Alert, FinancialProjection, SystemMetric } from '../types';
+
+export const agents: Agent[] = [
+  {
+    id: '1',
+    name: 'VERTEX (MAIN)',
+    status: 'online',
+    progress: 100,
+    role: 'SYSTEM COMMAND',
+    lastActive: new Date(),
+    cpuUsage: 45,
+    memoryUsage: 32,
+  },
+  {
+    id: '2',
+    name: 'MARKET_HUNTER',
+    status: 'online',
+    progress: 100,
+    role: 'MISSION COMPLETE ✅',
+    lastActive: new Date(Date.now() - 3600000),
+    cpuUsage: 12,
+    memoryUsage: 18,
+  },
+  {
+    id: '3',
+    name: 'TECH_EVALUATOR',
+    status: 'online',
+    progress: 100,
+    role: 'MISSION COMPLETE ✅',
+    lastActive: new Date(Date.now() - 7200000),
+    cpuUsage: 8,
+    memoryUsage: 15,
+  },
+  {
+    id: '4',
+    name: 'SECURITY_ARCHITECT',
+    status: 'offline',
+    progress: 0,
+    role: 'QUEUED',
+    lastActive: new Date(Date.now() - 86400000),
+    cpuUsage: 0,
+    memoryUsage: 0,
+  },
+  {
+    id: '5',
+    name: 'DEV_SPRINTER',
+    status: 'online',
+    progress: 100,
+    role: 'MVP STRUCTURE COMPLETE ✅',
+    lastActive: new Date(Date.now() - 1800000),
+    cpuUsage: 22,
+    memoryUsage: 28,
+  },
+];
+
+export const missions: Mission[] = [
+  {
+    id: '1',
+    title: 'MARKET RESEARCH',
+    status: 'completed',
+    phase: 'PHASE 1',
+    progress: 100,
+    startDate: new Date('2026-03-01'),
+    endDate: new Date('2026-03-15'),
+    description: 'Identify 3 validated opportunities',
+    priority: 'high',
+  },
+  {
+    id: '2',
+    title: 'MVP DEVELOPMENT',
+    status: 'completed',
+    phase: 'PHASE 2',
+    progress: 100,
+    startDate: new Date('2026-03-16'),
+    endDate: new Date('2026-04-05'),
+    description: 'API Monitoring for Small Teams - READY FOR DEPLOY',
+    priority: 'high',
+  },
+  {
+    id: '3',
+    title: 'REVENUE GENERATION',
+    status: 'in-progress',
+    phase: 'PHASE 3',
+    progress: 0,
+    startDate: new Date('2026-04-06'),
+    description: 'Target: $10K/MO in 90 days',
+    priority: 'high',
+  },
+  {
+    id: '4',
+    title: 'SCALE & REINVEST',
+    status: 'pending',
+    phase: 'PHASE 4',
+    progress: 0,
+    startDate: new Date('2026-07-01'),
+    description: 'Exponential scale with 70% reinvestment',
+    priority: 'medium',
+  },
+];
+
+export const alerts: Alert[] = [
+  {
+    id: '1',
+    type: 'success',
+    title: 'SUB-AGENT PAIRING REQUIREMENT',
+    message: 'Resolved by BOSS',
+    timestamp: new Date(Date.now() - 3600000),
+    read: true,
+  },
+  {
+    id: '2',
+    type: 'success',
+    title: 'TELEGRAM UNIFIED SESSION',
+    message: 'Operational',
+    timestamp: new Date(Date.now() - 7200000),
+    read: true,
+  },
+  {
+    id: '3',
+    type: 'success',
+    title: 'MEMORY PRESERVATION',
+    message: 'Active',
+    timestamp: new Date(Date.now() - 10800000),
+    read: true,
+  },
+  {
+    id: '4',
+    type: 'warning',
+    title: 'SECURITY OPTIMIZATION',
+    message: 'In Progress',
+    timestamp: new Date(Date.now() - 14400000),
+    read: false,
+  },
+  {
+    id: '5',
+    type: 'success',
+    title: 'GITHUB SSH KEY',
+    message: 'Configured & Working',
+    timestamp: new Date(Date.now() - 18000000),
+    read: true,
+  },
+  {
+    id: '6',
+    type: 'success',
+    title: 'GITHUB TOKEN EXPOSED',
+    message: 'Revoked by BOSS',
+    timestamp: new Date(Date.now() - 21600000),
+    read: true,
+  },
+];
+
+export const financialProjections: FinancialProjection[] = [
+  { month: 'Day 0-30', target: 0, actual: 0, projection: 0 },
+  { month: 'Day 30-60', target: 1000, actual: 0, projection: 850 },
+  { month: 'Day 60-90', target: 10000, actual: 0, projection: 7500 },
+  { month: 'Day 90+', target: 25000, actual: 0, projection: 18000 },
+];
+
+export const systemMetrics: SystemMetric[] = [
+  { timestamp: new Date(Date.now() - 3600000), cpu: 45, memory: 32, networkIn: 120, networkOut: 85, diskUsage: 13 },
+  { timestamp: new Date(Date.now() - 2700000), cpu: 42, memory: 34, networkIn: 110, networkOut: 78, diskUsage: 13 },
+  { timestamp: new Date(Date.now() - 1800000), cpu: 48, memory: 36, networkIn: 135, networkOut: 92, diskUsage: 14 },
+  { timestamp: new Date(Date.now() - 900000), cpu: 38, memory: 31, networkIn: 95, networkOut: 65, diskUsage: 13 },
+  { timestamp: new Date(), cpu: 41, memory: 33, networkIn: 125, networkOut: 88, diskUsage: 13 },
+];
+
+export const systemVitals = {
+  infrastructure: { label: 'VPS 2GB/57GB', value: 13 },
+  security: { label: 'GATEWAY CONFIG', value: 70 },
+  communication: { label: 'TELEGRAM+WEBCHAT', value: 100 },
+  memory: { label: 'PRESERVATION ACTIVE', value: 100 },
+  continuity: { label: 'UNIFIED SESSION', value: 100 },
+  versionControl: { label: 'GITHUB REPO', value: 100 },
+  fileAccess: { label: 'FTP SERVER', value: 100 },
+  emailSystem: { label: 'SMTP/IMAP', value: 100 },
+  database: { label: 'MYSQL PRODUCTION', value: 100 },
+  domain: { label: 'SSL ENABLED', value: 100 },
+};

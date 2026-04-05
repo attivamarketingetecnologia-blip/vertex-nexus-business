@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 VERTEX Nexus Control Room</title>
+    <style>
+        :root {
+            --vertex-blue: #0ea5e9;
+            --vertex-purple: #8b5cf6;
+            --vertex-dark: #0f172a;
+            --vertex-surface: #1e293b;
+            --vertex-cyan: #06d6a0;
+            --vertex-amber: #f59e0b;
+            --vertex-red: #ef4444;
+            --vertex-green: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--vertex-dark) 0%, #1e1b4b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: radial-gradient(circle, var(--vertex-blue) 0%, var(--vertex-purple) 100%);
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .logo-text h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .status-badge {
+            background: rgba(6, 214, 160, 0.15);
+            border: 2px solid var(--vertex-cyan);
+            color: var(--vertex-cyan);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .connection-status {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--vertex-blue);
+            color: var(--vertex-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(14, 165, 233, 0.15);
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+        }
+        
+        .panel-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--vertex-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Agent Grid */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .agent-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--vertex-cyan);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .agent-card.completed::before {
+            background: var(--vertex-cyan);
+            opacity: 1;
+        }
+        
+        .agent-card.in-progress::before {
+            background: var(--vertex-blue);
+            opacity: 1;
+        }
+        
+        .agent-card.todo::before {
+            background: var(--vertex-red);
+            opacity: 1;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--vertex-blue);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+        }
+        
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .agent-status {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--vertex-cyan);
+            border: 1px solid var(--vertex-cyan);
+        }
+        
+        .status-in-progress {
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--vertex-blue);
+            border: 1px solid var(--vertex-blue);
+        }
+        
+        .status-todo {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--vertex-red);
+            border: 1px solid var(--vertex-red);
+        }
+        
+        .agent-details {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .agent-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        /* Metrics Panel */
+        .metrics-panel {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .metric-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        
+        /* Real-time Updates */
+        .updates-panel {
+            grid-column: 1 / -1;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .updates-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .update-item {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .update-item:last-child {
+            border-bottom: none;
+        }
+        
+        .update-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vertex-amber);
+        }
+        
+        .update-content {
+            flex: 1;
+        }
+        
+        .update-time {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(14, 165, 233, 0.2);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .server-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(0.98); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px var(--vertex-blue); }
+            50% { box-shadow: 0 0 20px var(--vertex-cyan), 0 0 30px var(--vertex-blue); }
+            100% { box-shadow: 0 0 10px var(--vertex-blue); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(14, 165, 233, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--vertex-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <div class="logo-text">
+                    <h1>VERTEX NEXUS</h1>
+                    <p id="serverInfo">Control Room • v2.0.0 • Public Access • Real-time Dashboard</p>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <div class="status-badge" id="systemStatus">
+                    <span class="loading" id="statusLoading"></span>
+                    <span id="statusText">CONNECTING...</span>
+                </div>
+                <div class="connection-status" id="connectionStatus">
+                    <span id="connectionText">🔗 Connecting to API...</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">🎯 AGENT FLEET CONTROL</h2>
+                    <div class="status-badge" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                        <span id="agentCount">0</span>/13 AGENTS
+                    </div>
+                </div>
+                
+                <div class="agent-grid" id="agentGrid">
+                    <!-- Agents will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Metrics Panel -->
+            <div class="metrics-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">📊 SYSTEM METRICS</h2>
+                    <div class="status-badge" style="font-size: 0.9rem; padding: 0.5rem 1rem; background: rgba(139, 92, 246, 0.15); border-color: var(--vertex-purple); color: var(--vertex-purple);">
+                        LIVE
+                    </div>
+                </div>
+                
+                <div class="metrics-grid" id="metricsGrid">
+                    <!-- Metrics will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Real-time Updates -->
+            <div class="updates-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">⚡ REAL-TIME UPDATES</h2>
+                    <div class="status-badge" style="font-size: 0.9rem; padding: 0.5rem 1rem; background: rgba(245, 158, 11, 0.15); border-color: var(--vertex-amber); color: var(--vertex-amber);">
+                        <span id="updateCount">0</span> UPDATES
+                    </div>
+                </div>
+                
+                <div class="updates-list" id="updatesList">
+                    <!-- Updates will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🎯 VERTEX NEXUS CONTROL ROOM • PUBLIC ACCESS ENABLED • REAL-TIME DASHBOARD</p>
+            <p style="margin-top: 0.5rem; font-style: italic;" id="welcomeMessage">"Initializing VERTEX Control Room..."</p>
+            
+            <div class="server-info">
+                <div class="info-item">
+                    <span>🌐</span>
+                    <span id="serverUrl">http://191.252.179.78:8080</span>
+                </div>
+                <div class="info-item">
+                    <span>🔄</span>
+                    <span id="lastUpdate">Last update: --:--:--</span>
+                </div>
+                <div class="info-item">
+                    <span>⚡</span>
+                    <span id="responseTime">Response: -- ms</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 🎯 VERTEX Control Room - Real-time Dashboard
+        class VertexControlRoom {
+            constructor() {
+                this.baseUrl = window.location.origin;
+                this.agents = [];
+                this.metrics = {};
+                this.updates = [];
+                this.lastUpdateTime = null;
+                this.isConnected = false;
+                
+                // DOM Elements
+                this.elements = {
+                    systemStatus: document.getElementById('systemStatus'),
+                    statusText: document.getElementById('statusText'),
+                    statusLoading: document.getElementById('statusLoading'),
+                    connection</script><script src="vertex-dashboard.js"></script></body></html>

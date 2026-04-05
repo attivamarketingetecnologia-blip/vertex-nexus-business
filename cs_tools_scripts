@@ -1,0 +1,481 @@
+# Customer Success Tools & Scripts
+
+## 1. Automated Health Score Dashboard
+
+```python
+# health_dashboard.py
+"""
+Real-time customer health dashboard with alerting
+"""
+
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+class CustomerHealthDashboard:
+    def __init__(self):
+        self.customers = self.load_customer_data()
+        self.thresholds = {
+            'green': 80,
+            'yellow': 60,
+            'red': 0
+        }
+    
+    def load_customer_data(self):
+        """Load customer data from database/API"""
+        # This would connect to your actual data source
+        # For demo purposes, returning sample data
+        return pd.DataFrame({
+            'customer_id': ['C001', 'C002', 'C003', 'C004', 'C005'],
+            'customer_name': ['Acme Inc', 'Beta Corp', 'Gamma LLC', 'Delta Co', 'Epsilon Ltd'],
+            'plan': ['Business', 'Team', 'Starter', 'Business', 'Team'],
+            'active_monitors': [45, 25, 10, 48, 22],
+            'plan_limit': [50, 30, 15, 50, 30],
+            'weekly_logins': [5, 3, 1, 6, 2],
+            'failed_monitors': [2, 5, 3, 1, 4],
+            'kb_views': [8, 3, 1, 10, 2],
+            'webinar_attendance': [1, 0, 0, 1, 0],
+            'community_posts': [2, 0, 0, 3, 0],
+            'uptime_improvement': [0.15, 0.05, 0.0, 0.20, 0.02],
+            'alert_reduction': [30, 10, 0, 40, 5],
+            'integrations_used': [2, 1, 0, 3, 1],
+            'csat_score': [4.2, 3.8, 3.0, 4.5, 3.5],
+            'nps_score': [8, 6, 4, 9, 5],
+            'support_tickets': [3, 8, 12, 2, 6],
+            'mrr': [299, 99, 49, 299, 99]
+        })
+    
+    def calculate_health_score(self, row):
+        """Calculate health score for a customer"""
+        # Usage Score (40%)
+        usage_score = (
+            (row['active_monitors'] / row['plan_limit'] * 0.4) +
+            (min(row['weekly_logins'] / 7, 1) * 0.3) +
+            (1 - min(row['failed_monitors'] / max(row['active_monitors'], 1), 1)) * 0.3
+        ) * 40
+        
+        # Engagement Score (30%)
+        engagement_score = (
+            (min(row['kb_views'] / 10, 1) * 0.4) +
+            (row['webinar_attendance'] * 0.3) +
+            (min(row['community_posts'] / 5, 1) * 0.3)
+        ) * 30
+        
+        # Value Score (20%)
+        value_score = (
+            (row['uptime_improvement'] * 0.4) +
+            (1 - min(row['alert_reduction'] / 100, 1)) * 0.3 +
+            (row['integrations_used'] / 3 * 0.3)
+        ) * 20
+        
+        # Satisfaction Score (10%)
+        satisfaction_score = (
+            (row['csat_score'] / 5 * 0.5) +
+            ((row['nps_score'] + 100) / 200 * 0.3) +
+            (1 - min(row['support_tickets'] / 10, 1)) * 0.2
+        ) * 10
+        
+        total_score = usage_score + engagement_score + value_score + satisfaction_score
+        
+        return round(total_score, 1)
+    
+    def determine_tier(self, score):
+        """Determine health tier based on score"""
+        if score >= self.thresholds['green']:
+            return 'Green', '💚'
+        elif score >= self.thresholds['yellow']:
+            return 'Yellow', '💛'
+        else:
+            return 'Red', '❤️'
+    
+    def generate_dashboard(self):
+        """Generate complete health dashboard"""
+        dashboard_data = []
+        
+        for _, row in self.customers.iterrows():
+            score = self.calculate_health_score(row)
+            tier, emoji = self.determine_tier(score)
+            
+            dashboard_data.append({
+                'Customer': row['customer_name'],
+                'Plan': row['plan'],
+                'Health Score': score,
+                'Tier': f"{emoji} {tier}",
+                'MRR': f"${row['mrr']}",
+                'Active Monitors': f"{row['active_monitors']}/{row['plan_limit']}",
+                'Support Tickets': row['support_tickets'],
+                'CSAT': row['csat_score']
+            })
+        
+        df = pd.DataFrame(dashboard_data)
+        df = df.sort_values('Health Score', ascending=False)
+        
+        return df
+    
+    def send_alerts(self):
+        """Send email alerts for at-risk customers"""
+        at_risk_customers = []
+        
+        for _, row in self.customers.iterrows():
+            score = self.calculate_health_score(row)
+            if score < self.thresholds['yellow']:
+                at_risk_customers.append({
+                    'name': row['customer_name'],
+                    'score': score,
+                    'mrr': row['mrr'],
+                    'issues': self.identify_issues(row)
+                })
+        
+        if at_risk_customers:
+            self.send_alert_email(at_risk_customers)
+    
+    def identify_issues(self, row):
+        """Identify specific issues for at-risk customers"""
+        issues = []
+        
+        if row['weekly_logins'] < 2:
+            issues.append(f"Low engagement ({row['weekly_logins']} logins/week)")
+        
+        if row['failed_monitors'] / max(row['active_monitors'], 1) > 0.2:
+            issues.append(f"High failure rate ({row['failed_monitors']} failed monitors)")
+        
+        if row['support_tickets'] > 5:
+            issues.append(f"High support volume ({row['support_tickets']} tickets)")
+        
+        if row['csat_score'] < 3.5:
+            issues.append(f"Low satisfaction (CSAT: {row['csat_score']})")
+        
+        return issues
+    
+    def send_alert_email(self, customers):
+        """Send alert email to CS team"""
+        # Email configuration
+        sender_email = "alerts@yourcompany.com"
+        receiver_email = "cs-team@yourcompany.com"
+        password = "your_password"  # Use environment variables in production
+        
+        # Create message
+        message = MIMEMultipart("alternative")
+        message["Subject"] = f"🚨 Customer Health Alert: {len(customers)} At-Risk Customers"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        
+        # Create HTML content
+        html = f"""
+        <html>
+        <body>
+            <h2>Customer Health Alert</h2>
+            <p>Found {len(customers)} customers requiring immediate attention:</p>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <tr>
+                    <th>Customer</th>
+                    <th>Health Score</th>
+                    <th>MRR</th>
+                    <th>Issues</th>
+                </tr>
+        """
+        
+        for customer in customers:
+            issues_html = "<br>".join(customer['issues'])
+            html += f"""
+                <tr>
+                    <td>{customer['name']}</td>
+                    <td style="color: red; font-weight: bold;">{customer['score']}</td>
+                    <td>${customer['mrr']}</td>
+                    <td>{issues_html}</td>
+                </tr>
+            """
+        
+        html += """
+            </table>
+            <p>Please review these accounts and take appropriate action.</p>
+            <p>Best regards,<br>Customer Success System</p>
+        </body>
+        </html>
+        """
+        
+        # Attach HTML content
+        message.attach(MIMEText(html, "html"))
+        
+        # Send email (commented out for safety)
+        # with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        #     server.login(sender_email, password)
+        #     server.sendmail(sender_email, receiver_email, message.as_string())
+        
+        print(f"Alert email prepared for {len(customers)} at-risk customers")
+
+# Usage
+dashboard = CustomerHealthDashboard()
+df = dashboard.generate_dashboard()
+print("Customer Health Dashboard:")
+print(df.to_string(index=False))
+print("\n" + "="*80 + "\n")
+
+dashboard.send_alerts()
+```
+
+## 2. Proactive Check-in Scheduler
+
+```python
+# checkin_scheduler.py
+"""
+Automated scheduling of proactive customer check-ins
+"""
+
+import json
+from datetime import datetime, timedelta
+from typing import List, Dict
+import calendar
+
+class CheckInScheduler:
+    def __init__(self):
+        self.customers = self.load_customers()
+        self.checkin_frequency = {
+            'green': 90,  # days between check-ins
+            'yellow': 30,
+            'red': 7
+        }
+    
+    def load_customers(self):
+        """Load customer data with health scores"""
+        # In production, this would come from your database
+        return [
+            {
+                'id': 'C001',
+                'name': 'Acme Inc',
+                'health_score': 85,
+                'tier': 'green',
+                'last_checkin': '2024-01-15',
+                'cs_owner': 'alice@company.com',
+                'mrr': 299
+            },
+            {
+                'id': 'C002',
+                'name': 'Beta Corp',
+                'health_score': 65,
+                'tier': 'yellow',
+                'last_checkin': '2024-02-01',
+                'cs_owner': 'bob@company.com',
+                'mrr': 99
+            },
+            {
+                'id': 'C003',
+                'name': 'Gamma LLC',
+                'health_score': 45,
+                'tier': 'red',
+                'last_checkin': '2024-02-10',
+                'cs_owner': 'charlie@company.com',
+                'mrr': 49
+            }
+        ]
+    
+    def schedule_checkins(self, start_date=None):
+        """Schedule check-ins for the next month"""
+        if not start_date:
+            start_date = datetime.now()
+        
+        schedule = {}
+        
+        for customer in self.customers:
+            frequency = self.checkin_frequency[customer['tier']]
+            last_checkin = datetime.strptime(customer['last_checkin'], '%Y-%m-%d')
+            next_checkin = last_checkin + timedelta(days=frequency)
+            
+            # If next check-in is within next 30 days, schedule it
+            if next_checkin <= start_date + timedelta(days=30):
+                week_number = next_checkin.isocalendar()[1]
+                day_name = calendar.day_name[next_checkin.weekday()]
+                
+                if week_number not in schedule:
+                    schedule[week_number] = {}
+                
+                if day_name not in schedule[week_number]:
+                    schedule[week_number][day_name] = []
+                
+                schedule[week_number][day_name].append({
+                    'customer': customer['name'],
+                    'date': next_checkin.strftime('%Y-%m-%d'),
+                    'owner': customer['cs_owner'],
+                    'tier': customer['tier'],
+                    'mrr': customer['mrr']
+                })
+        
+        return schedule
+    
+    def generate_calendar_view(self, schedule):
+        """Generate calendar view of scheduled check-ins"""
+        calendar_view = {}
+        
+        for week_num, days in schedule.items():
+            calendar_view[week_num] = {}
+            for day, appointments in days.items():
+                calendar_view[week_num][day] = []
+                for appt in appointments:
+                    calendar_view[week_num][day].append(
+                        f"{appt['customer']} ({appt['tier']}) - {appt['owner']}"
+                    )
+        
+        return calendar_view
+    
+    def generate_email_templates(self, schedule):
+        """Generate email templates for scheduled check-ins"""
+        templates = []
+        
+        for week_num, days in schedule.items():
+            for day, appointments in days.items():
+                for appt in appointments:
+                    template = self.create_checkin_email(appt)
+                    templates.append(template)
+        
+        return templates
+    
+    def create_checkin_email(self, appointment):
+        """Create personalized check-in email template"""
+        tier_colors = {
+            'green': '#4CAF50',
+            'yellow': '#FFC107',
+            'red': '#F44336'
+        }
+        
+        template = f"""
+        Subject: Checking in - {appointment['customer']} Success Review
+        
+        Hi [CSM Name],
+        
+        It's time for your scheduled check-in with {appointment['customer']}.
+        
+        **Appointment Details:**
+        - Date: {appointment['date']}
+        - Customer: {appointment['customer']}
+        - Health Tier: <span style="color: {tier_colors[appointment['tier']]}">{appointment['tier'].upper()}</span>
+        - MRR: ${appointment['mrr']}
+        
+        **Preparation Checklist:**
+        1. Review recent account activity
+        2. Check support ticket history
+        3. Prepare success metrics
+        4. Identify growth opportunities
+        
+        **Suggested Agenda:**
+        1. Review quarterly goals (5 min)
+        2. Discuss current challenges (10 min)
+        3. Share product updates (5 min)
+        4. Plan next steps (5 min)
+        
+        **Resources:**
+        - Account dashboard: [Link]
+        - Previous notes: [Link]
+        - Success plan: [Link]
+        
+        Best regards,
+        Customer Success System
+        """
+        
+        return template
+
+# Usage
+scheduler = CheckInScheduler()
+schedule = scheduler.schedule_checkins()
+calendar_view = scheduler.generate_calendar_view(schedule)
+templates = scheduler.generate_email_templates(schedule)
+
+print("Scheduled Check-ins:")
+print(json.dumps(calendar_view, indent=2))
+print("\n" + "="*80 + "\n")
+print(f"Generated {len(templates)} email templates")
+```
+
+## 3. NPS Analysis Tool
+
+```python
+# nps_analyzer.py
+"""
+Analyze NPS survey results and generate insights
+"""
+
+import pandas as pd
+import numpy as np
+from textblob import TextBlob
+from collections import Counter
+import matplotlib.pyplot as plt
+
+class NPSAnalyzer:
+    def __init__(self, survey_data):
+        self.data = pd.DataFrame(survey_data)
+    
+    def calculate_nps(self):
+        """Calculate overall NPS score"""
+        if 'score' not in self.data.columns:
+            raise ValueError("Survey data must contain 'score' column")
+        
+        promoters = len(self.data[self.data['score'] >= 9])
+        detractors = len(self.data[self.data['score'] <= 6])
+        total = len(self.data)
+        
+        nps = ((promoters - detractors) / total) * 100
+        return round(nps, 1)
+    
+    def segment_responses(self):
+        """Segment responses into promoters, passives, detractors"""
+        segments = {
+            'promoters': self.data[self.data['score'] >= 9],
+            'passives': self.data[(self.data['score'] >= 7) & (self.data['score'] <= 8)],
+            'detractors': self.data[self.data['score'] <= 6]
+        }
+        return segments
+    
+    def analyze_feedback(self, text_column='feedback'):
+        """Analyze text feedback for insights"""
+        if text_column not in self.data.columns:
+            return {}
+        
+        segments = self.segment_responses()
+        insights = {}
+        
+        for segment_name, segment_data in segments.items():
+            if text_column in segment_data.columns:
+                feedback_text = ' '.join(segment_data[text_column].dropna().astype(str))
+                
+                # Sentiment analysis
+                blob = TextBlob(feedback_text)
+                sentiment = blob.sentiment.polarity
+                
+                # Extract common themes (simple keyword extraction)
+                words = feedback_text.lower().split()
+                common_words = Counter(words).most_common(10)
+                
+                insights[segment_name] = {
+                    'count': len(segment_data),
+                    'sentiment': round(sentiment, 2),
+                    'common_words': common_words,
+                    'sample_feedback': segment_data[text_column].head(3).tolist() if len(segment_data) > 0 else []
+                }
+        
+        return insights
+    
+    def generate_report(self):
+        """Generate comprehensive NPS report"""
+        nps_score = self.calculate_nps()
+        segments = self.segment_responses()
+        insights = self.analyze_feedback()
+        
+        report = {
+            'overall_nps': nps_score,
+            'response_count': len(self.data),
+            'segment_distribution': {
+                'promoters': len(segments['promoters']),
+                'passives': len(segments['passives']),
+                'detractors': len(segments['detractors'])
+            },
+            'segment_percentages': {
+                'promoters': round(len(segments['promoters']) / len(self.data) * 100, 1),
+                'passives': round(len(segments['passives']) / len(self.data) * 100, 1),
+                'detractors': round(len(segments['detractors']) / len(self.data) * 100, 1)
+            },
+            'insights': insights,
+            'recommendations': self.generate_recommendations(segments, insights)
+        }
+        

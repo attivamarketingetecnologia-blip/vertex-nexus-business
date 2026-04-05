@@ -1,0 +1,120 @@
+                        <div class="agent-task">${agent.task}</div>
+                        <div class="agent-time">⏱️ ${agent.time}</div>
+                    `;
+                    
+                    // Add click handler to update status
+                    agentCard.addEventListener('click', async () => {
+                        if (agent.status === 'todo') {
+                            if (confirm(`Mark ${agent.name} as completed?`)) {
+                                try {
+                                    const response = await fetch(`${this.baseUrl}/api/agents/${agent.id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Authorization': this.token,
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ status: 'completed' })
+                                    });
+                                    
+                                    if (response.ok) {
+                                        agent.status = 'completed';
+                                        this.renderAgents();
+                                        await this.loadStatus();
+                                    }
+                                } catch (error) {
+                                    console.error('Update error:', error);
+                                }
+                            }
+                        }
+                    });
+                    
+                    container.appendChild(agentCard);
+                });
+            }
+            
+            renderMetrics() {
+                const container = document.getElementById('metricsGrid');
+                container.innerHTML = '';
+                
+                const metricCards = [
+                    { label: 'ROI', value: this.metrics.financial.roi },
+                    { label: 'SUCCESS PROBABILITY', value: this.metrics.risk.successProbability },
+                    { label: 'RISK SCORE', value: this.metrics.risk.score },
+                    { label: 'PROJECTED PROFIT', value: this.metrics.financial.projectedProfit },
+                    { label: 'MRR TARGET', value: this.metrics.financial.mrrTarget },
+                    { label: 'AGENTS COMPLETE', value: this.metrics.operational.agentsComplete }
+                ];
+                
+                metricCards.forEach(metric => {
+                    const metricCard = document.createElement('div');
+                    metricCard.className = 'metric-card';
+                    metricCard.style.animation = 'slideIn 0.5s ease';
+                    
+                    metricCard.innerHTML = `
+                        <div class="metric-value">${metric.value}</div>
+                        <div class="metric-label">${metric.label}</div>
+                    `;
+                    
+                    container.appendChild(metricCard);
+                });
+            }
+            
+            startAutoRefresh() {
+                // Refresh status every 10 seconds
+                setInterval(() => this.loadStatus(), 10000);
+                
+                // Refresh agents and metrics every 30 seconds
+                setInterval(async () => {
+                    await this.loadAgents();
+                    await this.loadMetrics();
+                }, 30000);
+                
+                // Simulate real-time updates
+                setInterval(() => {
+                    if (this.agents.length > 0 && Math.random() > 0.7) {
+                        // Simulate agent status change
+                        const randomAgent = this.agents[Math.floor(Math.random() * this.agents.length)];
+                        if (randomAgent.status === 'todo') {
+                            console.log(`Simulated update: ${randomAgent.name} status changed`);
+                        }
+                    }
+                }, 15000);
+            }
+            
+            logout() {
+                localStorage.removeItem('vertex_token');
+                localStorage.removeItem('vertex_user');
+                window.location.href = '/login';
+            }
+        }
+        
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.dashboard = new VertexDashboard();
+        });
+        
+        // Expose logout function globally
+        window.logout = function() {
+            if (window.dashboard) {
+                window.dashboard.logout();
+            } else {
+                localStorage.removeItem('vertex_token');
+                localStorage.removeItem('vertex_user');
+                window.location.href = '/login';
+            }
+        };
+        
+        // Add keyboard shortcut for refresh (Ctrl+R)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                if (window.dashboard) {
+                    window.dashboard.loadStatus();
+                    window.dashboard.loadAgents();
+                    window.dashboard.loadMetrics();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

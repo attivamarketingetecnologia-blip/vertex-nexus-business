@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 VERTEX Login</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .login-box {
+            background: rgba(30, 41, 59, 0.9);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #0ea5e9;
+            width: 300px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #0ea5e9;
+            margin-bottom: 1.5rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+        }
+        
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .success {
+            color: #06d6a0;
+            background: rgba(6, 214, 160, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔐 VERTEX Login</h1>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <input type="text" id="username" placeholder="Username" value="admin">
+        <input type="password" id="password" placeholder="Password" value="V3rt3x@Boss">
+        
+        <button onclick="login()">Login to Dashboard</button>
+        
+        <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 1rem;">
+            Credentials: admin / V3rt3x@Boss
+        </p>
+    </div>
+    
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            
+            // Clear messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            if (!username || !password) {
+                errorDiv.textContent = 'Please enter username and password';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Make login request
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Login failed');
+                }
+                
+                const data = await response.json();
+                
+                // Store token in localStorage
+                localStorage.setItem('vertex_token', data.token);
+                localStorage.setItem('vertex_user', JSON.stringify(data.user));
+                
+                // Show success
+                successDiv.textContent = '✅ Login successful! Redirecting...';
+                successDiv.style.display = 'block';
+                
+                // Wait a moment then redirect WITH token in URL
+                setTimeout(() => {
+                    // Redirect to dashboard
+                    window.location.href = '/dashboard';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Login failed. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        // Auto-login on page load for testing
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already logged in
+            const token = localStorage.getItem('vertex_token');
+            if (token) {
+                // Try to access dashboard
+                fetch('/api/status', {
+                    headers: {
+                        'Authorization': token
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        localStorage.removeItem('vertex_token');
+                    }
+                })
+                .catch(() => {
+                    localStorage.removeItem('vertex_token');
+                });
+            }
+            
+            // Auto-fill and login for quick testing
+            setTimeout(() => {
+                if (window.location.href.includes('191.252.179.78')) {
+                    document.getElementById('username').value = 'admin';
+                    document.getElementById('password').value = 'V3rt3x@Boss';
+                    // Auto-login after 1 second
+                    setTimeout(login, 1000);
+                }
+            }, 500);
+        });
+        
+        // Allow Enter key to trigger login
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>

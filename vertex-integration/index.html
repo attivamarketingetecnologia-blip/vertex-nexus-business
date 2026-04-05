@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=/vertex/">
+    <title>🎯 VERTEX Nexus - Redirecting...</title>
+    <style>
+        :root {
+            --vertex-blue: #0ea5e9;
+            --vertex-purple: #8b5cf6;
+            --vertex-dark: #0f172a;
+        }
+        
+        body {
+            background: var(--vertex-dark);
+            color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .loading {
+            margin: 2rem 0;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(14, 165, 233, 0.3);
+            border-top-color: var(--vertex-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        .message {
+            color: #94a3b8;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+        
+        .link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--vertex-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">VERTEX Nexus</div>
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+        <div class="message">
+            <p>Integrating VERTEX Control Room into main domain...</p>
+            <p>Redirecting to: <strong>https://nexusdigital.orquestracrm.com.br/vertex/</strong></p>
+            <p>System Status: 9/9 Agents Complete | ROI: 376x | Risk: 6/20 LOW</p>
+        </div>
+        <a href="/vertex/" class="link">Click here if not redirected automatically</a>
+    </div>
+    
+    <script>
+        // Console message
+        console.log('%c🎯 VERTEX Nexus Domain Integration', 'color: #0ea5e9; font-size: 16px; font-weight: bold;');
+        console.log('%cRedirecting to: https://nexusdigital.orquestracrm.com.br/vertex/', 'color: #8b5cf6;');
+        
+        // Force redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = '/vertex/';
+        }, 3000);
+    </script>
+</body>
+</html>

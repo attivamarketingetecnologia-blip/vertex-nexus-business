@@ -1,0 +1,204 @@
+                <div style="color: #94a3b8; margin-bottom: 1rem;">per month</div>
+                <ul class="pricing-features">
+                    <li>50 API Endpoints</li>
+                    <li>All Starter Features</li>
+                    <li>Advanced Analytics</li>
+                    <li>Webhook Integration</li>
+                    <li>Team Access (10 users)</li>
+                    <li>24/7 Support</li>
+                </ul>
+                <button class="cta-secondary" onclick="scrollToSignup()">Join Waitlist</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-plan">BUSINESS</div>
+                <div class="pricing-price">$299</div>
+                <div style="color: #94a3b8; margin-bottom: 1rem;">per month</div>
+                <ul class="pricing-features">
+                    <li>200 API Endpoints</li>
+                    <li>All Pro Features</li>
+                    <li>Custom SLAs</li>
+                    <li>Dedicated Support</li>
+                    <li>API Access</li>
+                    <li>Custom Reporting</li>
+                </ul>
+                <button class="cta-secondary" onclick="scrollToSignup()">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Section -->
+    <section id="signup" class="container">
+        <div class="signup-section">
+            <h2 class="signup-title">Join Our Waitlist</h2>
+            <p class="signup-subtitle">
+                Be the first to know when we launch. Get early access, exclusive discounts, 
+                and help shape the future of API monitoring.
+            </p>
+            <div class="signup-form">
+                <div class="form-group">
+                    <input type="email" id="signupEmail" class="form-input" placeholder="Your email address" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="signupName" class="form-input" placeholder="Your name (optional)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="signupCompany" class="form-input" placeholder="Company (optional)">
+                </div>
+                <button type="submit" class="form-submit" onclick="submitSignup()">
+                    Join Waitlist & Get Early Access
+                </button>
+                <p style="color: #94a3b8; margin-top: 1rem; font-size: 0.9rem;">
+                    No spam. Unsubscribe anytime. 500+ developers already waiting.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="container" style="margin-bottom: 6rem;">
+        <h2 class="section-title">Built for Developers, by Developers</h2>
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 2rem;">
+                We're a small team of developers who got tired of complex, expensive API monitoring tools. 
+                We built something simple, affordable, and actually useful for small teams.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--vertex-cyan);">376x</div>
+                    <div style="color: #94a3b8;">Projected ROI</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--vertex-cyan);">85%</div>
+                    <div style="color: #94a3b8;">Success Probability</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--vertex-cyan);">6/20</div>
+                    <div style="color: #94a3b8;">Risk Score (LOW)</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--vertex-cyan);">$564K</div>
+                    <div style="color: #94a3b8;">Year 1 Projection</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#features" class="footer-link">Features</a>
+                <a href="#pricing" class="footer-link">Pricing</a>
+                <a href="#about" class="footer-link">About</a>
+                <a href="/login" class="footer-link">Control Room</a>
+                <a href="mailto:nexusdigital@orquestracrm.com.br" class="footer-link">Contact</a>
+            </div>
+            <p class="copyright">
+                &copy; 2026 VERTEX Nexus. All rights reserved.<br>
+                API Monitoring SaaS - Simple, Affordable, Effective.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToSignup() {
+            document.getElementById('signup').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('signupEmail').focus();
+        }
+        
+        async function submitSignup() {
+            const email = document.getElementById('signupEmail').value;
+            const name = document.getElementById('signupName').value;
+            const company = document.getElementById('signupCompany').value;
+            
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            const submitBtn = document.querySelector('.form-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Joining...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/public/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, name, company })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`✅ ${data.message}\n\nYour position in line: #${data.position}`);
+                    document.getElementById('signupEmail').value = '';
+                    document.getElementById('signupName').value = '';
+                    document.getElementById('signupCompany').value = '';
+                } else {
+                    alert(`❌ ${data.error || 'Something went wrong'}`);
+                }
+            } catch (error) {
+                alert('❌ Network error. Please try again.');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Load product info from API
+        async function loadProductInfo() {
+            try {
+                const response = await fetch('/api/public/product');
+                const data = await response.json();
+                
+                // Update page with dynamic data if needed
+                console.log('Product loaded:', data);
+            } catch (error) {
+                console.log('Using static product data');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProductInfo();
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Update waitlist count
+            setInterval(async () => {
+                try {
+                    // In a real app, you would fetch actual count from API
+                    // For now, we'll simulate growth
+                    const waitlistElement = document.querySelector('.signup-subtitle');
+                    if (waitlistElement) {
+                        const match = waitlistElement.textContent.match(/\d+/);
+                        if (match) {
+                            const current = parseInt(match[0]);
+                            const newCount = current + Math.floor(Math.random() * 3);
+                            waitlistElement.textContent = waitlistElement.textContent.replace(
+                                /\d+/, 
+                                newCount
+                            );
+                        }
+                    }
+                } catch (error) {
+                    // Silent fail
+                }
+            }, 30000); // Update every 30 seconds
+        });
+    </script>
+</body>
+</html>

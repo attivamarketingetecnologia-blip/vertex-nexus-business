@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&display=swap');
+
+:root {
+  --vertex-blue: #0066FF;
+  --vertex-purple: #8A2BE2;
+  --vertex-cyan: #00D4FF;
+  --vertex-green: #00FF88;
+  --vertex-amber: #FFAA00;
+  --vertex-danger: #FF3366;
+  --vertex-dark: #0A0A0F;
+  --vertex-surface: #121218;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--vertex-dark);
+  color: white;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Holographic Effects */
+.holographic-glass {
+  background: rgba(18, 18, 24, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 102, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 102, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.holographic-glow {
+  position: relative;
+}
+
+.holographic-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--vertex-blue), var(--vertex-purple), var(--vertex-cyan));
+  border-radius: inherit;
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0.5;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--vertex-cyan), transparent);
+  animation: scan 4s linear infinite;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--vertex-cyan);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: particle 8s linear infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 18, 24, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--vertex-blue), var(--vertex-purple));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(var(--vertex-cyan), var(--vertex-blue));
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 102, 255, 0.3);
+  color: white;
+}
+
+/* Keyframes */
+@keyframes glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes particle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 100px), var(--ty, -100px)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+code, pre, .mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(45deg, var(--vertex-blue), var(--vertex-purple), var(--vertex-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--vertex-dark), var(--vertex-dark)) padding-box,
+              linear-gradient(45deg, var(--vertex-blue), var(--vertex-purple)) border-box;
+}
+
+.shadow-holographic {
+  box-shadow: 
+    0 0 20px rgba(0, 102, 255, 0.3),
+    0 0 40px rgba(138, 43, 226, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}

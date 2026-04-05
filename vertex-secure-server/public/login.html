@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 VERTEX Control Room - Login</title>
+    <style>
+        :root {
+            --vertex-blue: #0ea5e9;
+            --vertex-purple: #8b5cf6;
+            --vertex-dark: #0f172a;
+            --vertex-surface: #1e293b;
+            --vertex-cyan: #06d6a0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--vertex-dark) 0%, #1e1b4b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        
+        .login-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(14, 165, 233, 0.2);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, var(--vertex-blue) 0%, var(--vertex-purple) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+        
+        .logo-text h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        .logo-text p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vertex-blue);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid var(--vertex-cyan);
+            color: var(--vertex-cyan);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .demo-credentials {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--vertex-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(0.98); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .login-card {
+            animation: slideIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <div class="logo-text">
+                    <h1>VERTEX</h1>
+                    <p>Control Room v3.0</p>
+                </div>
+            </div>
+            
+            <h2 class="login-title">Secure Access Required</h2>
+            <p class="login-subtitle">Enter your credentials to access the VERTEX Control Room</p>
+            
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginButton">
+                    <span id="buttonText">🔐 Login to Control Room</span>
+                    <span id="loadingText" style="display: none;">⏳ Authenticating...</span>
+                </button>
+            </form>
+            
+            <div class="demo-credentials">
+                <strong>Demo Credentials:</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>V3rt3x@Boss</code>
+            </div>
+            
+            <a href="/" class="back-link">← Back to Landing Page</a>
+        </div>
+    </div>
+    
+    <script>
+        // Test server connection first
+        async function testConnection() {
+            try {
+                const response = await fetch('/health', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Server connection OK');
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('❌ Server connection failed:', error);
+                return false;
+            }
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('loginButton');
+            const buttonText = document.getElementById('buttonText');
+            const loadingText = document.getElementById('loadingText');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Reset messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Validate inputs
+            if (!username || !password) {
+                errorMessage.textContent = '❌ Please enter both username and password';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Show loading
+            loginButton.disabled = true;
+            buttonText.style.display = 'none';
+            loadingText.style.display = 'inline';
+            
+            try {
+                // Test connection first
+                const isConnected = await testConnection();
+                if (!isConnected) {
+                    throw new Error('Cannot connect to server. Please check your connection.');
+                }
+                
+                // Try login
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password }),
+                    // Add timeout
+                    signal: AbortSignal.timeout(10000)
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Invalid username or password');
+                    } else if (response.status === 0) {
+                        throw new Error('Network error. Please check your connection.');
+                    } else {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                }
+                
+                const data = await response.json();
+                
+                // Store token
+                localStorage.setItem('vertex_token', data.token);
+                localStorage.setItem('vertex_user', JSON.stringify(data.user));
+                
+                // Show success
+                successMessage.textContent = '✅ Login successful! Redirecting to Control Room...';
+                successMessage.style.display = 'block';
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Show appropriate error message
+                if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+                    errorMessage.textContent = '❌ Request timeout. Server may be busy.';
+                } else if (error.message.includes('Network error') || error.message.includes('Failed to fetch')) {
+                    errorMessage.textContent = '❌ Network error. Please check your internet connection.';
+                } else {
+                    errorMessage.textContent = `❌ ${error.message}`;
+                }
+                
+                errorMessage.style.display = 'block';
+                
+            } finally {
+                // Reset button
+                loginButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loadingText.style.display = 'none';
+            }
+        });
+        
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('vertex_token');
+            if (token) {
+                // Verify token is still valid
+                try {
+                    const response = await fetch('/api/status', {
+                        headers: {
+                            'Authorization': token
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        localStorage.removeItem('vertex_token');
+                        localStorage.removeItem('vertex_user');
+                    }
+                } catch (error) {
+                    localStorage.removeItem('vertex_token');
+                    localStorage.removeItem('vertex_user');
+                }
+            }
+            
+            // Auto-fill demo credentials for testing
+            if (window.location.href.includes('localhost') || window.location.href.includes('192.168') || window.location.href.includes('127.0.0.1')) {
+                document.getElementById('username').value = 'admin';
+                document.getElementById('password').value = 'V3rt3x@Boss';
+            }
+            
+            // Test server connection on load
+            const isConnected = await testConnection();
+            if (!isConnected) {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = '⚠️  Server connection test failed. The system may be starting up.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

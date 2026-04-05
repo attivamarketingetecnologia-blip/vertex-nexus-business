@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 VERTEX Dashboard</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+        
+        .nav a:hover {
+            color: #0ea5e9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card h2 {
+            color: #0ea5e9;
+            margin-top: 0;
+        }
+        
+        .agent {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent.completed {
+            border-left: 4px solid #06d6a0;
+        }
+        
+        .agent.todo {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .status {
+            color: #06d6a0;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🎯 VERTEX CONTROL ROOM</div>
+        <div class="nav">
+            <a href="/dashboard-simple">Dashboard</a>
+            <a href="/">Landing Page</a>
+            <a href="/login-simple">Logout</a>
+        </div>
+    </div>
+    
+    <div id="error" class="error" style="display: none;"></div>
+    
+    <div class="dashboard">
+        <div>
+            <div class="card">
+                <h2>🎯 AGENT FLEET</h2>
+                <div id="agents"></div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="card">
+                <h2>📊 SYSTEM METRICS</h2>
+                <div id="metrics"></div>
+            </div>
+            
+            <div class="card">
+                <h2>⚡ STATUS</h2>
+                <div id="status">Loading...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get token from URL or localStorage
+        function getToken() {
+            // Try localStorage first
+            const token = localStorage.getItem('vertex_token');
+            if (token) return token;
+            
+            // Try URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            const token = getToken();
+            const errorDiv = document.getElementById('error');
+            
+            if (!token) {
+                errorDiv.textContent = 'No authentication token found. Please login first.';
+                errorDiv.style.display = 'block';
+                // Redirect to login after 3 seconds
+                setTimeout(() => {
+                    window.location.href = '/login-simple';
+                }, 3000);
+                return;
+            }
+            
+            try {
+                // Load status
+                const statusResponse = await fetch('/api/status', {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                
+                if (!statusResponse.ok) {
+                    if (statusResponse.status === 401) {
+                        throw new Error('Token expired or invalid');
+                    }
+                    throw new Error(`API error: ${statusResponse.status}`);
+                }
+                
+                const statusData = await statusResponse.json();
+                document.getElementById('status').innerHTML = `
+                    <div class="status">✅ ${statusData.message}</div>
+                    <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">
+                        Version: ${statusData.version} | Uptime: ${Math.floor(statusData.uptime / 60)}m
+                    </div>
+                `;
+                
+                // Load agents
+                const agentsResponse = await fetch('/api/agents', {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                
+                if (agentsResponse.ok) {
+                    const agentsData = await agentsResponse.json();
+                    let agentsHtml = '';
+                    
+                    agentsData.agents.forEach(agent => {
+                        agentsHtml += `
+                            <div class="agent ${agent.status}">
+                                <strong>${agent.name}</strong><br>
+                                <span style="color: #94a3b8;">${agent.task}</span><br>
+                                <small>Status: ${agent.status} | Time: ${agent.time}</small>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById('agents').innerHTML = agentsHtml;
+                }
+                
+                // Load metrics (simulated for now)
+                const metricsHtml = `
+                    <div class="metric">
+                        <div class="metric-value">376x</div>
+                        <div class="metric-label">ROI</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">85%</div>
+                        <div class="metric-label">Success Probability</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">6/20</div>
+                        <div class="metric-label">Risk Score (LOW)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">$564K</div>
+                        <div class="metric-label">Year 1 Projection</div>
+                    </div>
+                `;
+                
+                document.getElementById('metrics').innerHTML = metricsHtml;
+                
+                // Hide error if everything worked
+                errorDiv.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                errorDiv.textContent = `Error: ${error.message}. Redirecting to login...`;
+                errorDiv.style.display = 'block';
+                
+                // Clear invalid token
+                localStorage.removeItem('vertex_token');
+                
+                // Redirect to login
+                setTimeout(() => {
+                    window.location.href = '/login-simple';
+                }, 3000);
+            }
+        }
+        
+        // Auto-refresh every 30 seconds
+        function startAutoRefresh() {
+            setInterval(loadDashboard, 30000);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            startAutoRefresh();
+        });
+    </script>
+</body>
+</html>

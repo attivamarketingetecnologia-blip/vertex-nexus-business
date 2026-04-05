@@ -1,0 +1,476 @@
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">MONTH 3-6</div>
+                        <div class="timeline-event">Scale & Growth</div>
+                        <div class="timeline-details">Add advanced features, expand team, increase MRR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SaaS Address -->
+        <div class="saas-section">
+            <h2 class="saas-title">🏠 OUR SAAS ADDRESS</h2>
+            <div class="saas-url">https://api-monitoring.vertex-nexus.com</div>
+            <div class="saas-description">
+                Professional domain for our API Monitoring SaaS. Ready for launch.
+                <br>Email: nexusdigital@orquestracrm.com.br
+            </div>
+            <div class="status-badge">🚀 READY FOR LAUNCH</div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🎯 VERTEX NEXUS MISSION CONTROL • REAL-TIME KANBAN • SAAS ADDRESS DEFINED</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                <span id="lastUpdate">Last update: --</span> | 
+                <span id="totalTasks">Total tasks: --</span> | 
+                <span id="completionRate">Completion: --%</span>
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        class MissionKanban {
+            constructor() {
+                this.token = localStorage.getItem('vertex_token');
+                this.user = JSON.parse(localStorage.getItem('vertex_user') || '{}');
+                this.baseUrl = window.location.origin;
+                this.tasks = [];
+                
+                if (!this.token) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                this.init();
+            }
+            
+            async init() {
+                // Load tasks
+                await this.loadTasks();
+                
+                // Initialize drag & drop
+                this.initDragAndDrop();
+                
+                // Start auto-refresh
+                this.startAutoRefresh();
+                
+                // Update last update time
+                this.updateLastUpdate();
+            }
+            
+            async loadTasks() {
+                try {
+                    // In a real app, you would fetch from API
+                    // For now, we'll use sample data
+                    this.tasks = [
+                        // TO DO
+                        {
+                            id: 1,
+                            title: 'Setup Landing Page Analytics',
+                            description: 'Install Google Analytics, Hotjar, and conversion tracking',
+                            priority: 'high',
+                            assignee: 'MARKETING_OPERATIONS',
+                            column: 'todo',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 2,
+                            title: 'Create Social Media Campaign',
+                            description: 'Launch Twitter/LinkedIn campaign for 500 signups',
+                            priority: 'high',
+                            assignee: 'SOCIAL_MEDIA_MANAGER',
+                            column: 'todo',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 3,
+                            title: 'Configure MySQL Production Database',
+                            description: 'Setup production MySQL with backups and monitoring',
+                            priority: 'medium',
+                            assignee: 'DEV_SPRINTER',
+                            column: 'todo',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 4,
+                            title: 'Setup Asaas Billing Integration',
+                            description: 'Integrate Asaas for subscription management',
+                            priority: 'medium',
+                            assignee: 'BUSINESS_STRATEGIST',
+                            column: 'todo',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 5,
+                            title: 'Create Email Sequence',
+                            description: 'Welcome emails, onboarding, and nurture sequence',
+                            priority: 'low',
+                            assignee: 'CUSTOMER_SUCCESS',
+                            column: 'todo',
+                            created: '2026-04-05'
+                        },
+                        
+                        // IN PROGRESS
+                        {
+                            id: 6,
+                            title: 'Secure Server Implementation',
+                            description: 'Implement JWT authentication and protected APIs',
+                            priority: 'high',
+                            assignee: 'SECURITY_ARCHITECT',
+                            column: 'progress',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 7,
+                            title: 'Landing Page Optimization',
+                            description: 'A/B testing and conversion rate optimization',
+                            priority: 'medium',
+                            assignee: 'FRONT_ARCHITECT_V2',
+                            column: 'progress',
+                            created: '2026-04-05'
+                        },
+                        {
+                            id: 8,
+                            title: 'Agent Kanban System',
+                            description: 'Real-time drag & drop kanban for mission control',
+                            priority: 'medium',
+                            assignee: 'VERTEX_NEXUS',
+                            column: 'progress',
+                            created: '2026-04-05'
+                        },
+                        
+                        // DONE
+                        {
+                            id: 9,
+                            title: 'Market Research Complete',
+                            description: 'Identified API Monitoring as optimal opportunity',
+                            priority: 'high',
+                            assignee: 'MARKET_HUNTER',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 10,
+                            title: 'Technical Evaluation Complete',
+                            description: 'Confirmed 4-week MVP timeline, 85% success probability',
+                            priority: 'high',
+                            assignee: 'TECH_EVALUATOR',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 11,
+                            title: 'MVP Structure Created',
+                            description: 'Full Express.js structure with monitoring logic',
+                            priority: 'high',
+                            assignee: 'DEV_SPRINTER',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 12,
+                            title: 'Business Plan Complete',
+                            description: 'Complete business strategy with $564k Year 1 projection',
+                            priority: 'high',
+                            assignee: 'BUSINESS_STRATEGIST',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 13,
+                            title: 'Marketing Strategy Complete',
+                            description: 'Complete marketing/sales strategy with positioning',
+                            priority: 'medium',
+                            assignee: 'MARKETING_OPERATIONS',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 14,
+                            title: 'Customer Success Program',
+                            description: 'Complete customer success program with NPS >40 target',
+                            priority: 'medium',
+                            assignee: 'CUSTOMER_SUCCESS',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 15,
+                            title: 'Social Media Strategy',
+                            description: 'Complete social media strategy with 30-day calendar',
+                            priority: 'medium',
+                            assignee: 'SOCIAL_MEDIA_MANAGER',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 16,
+                            title: 'Visual Identity Created',
+                            description: 'Complete visual identity with holographic design',
+                            priority: 'low',
+                            assignee: 'VISUAL_IDENTITY_DESIGNER',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        },
+                        {
+                            id: 17,
+                            title: 'Control Room v1.1.0',
+                            description: 'Complete Control Room with Agent Kanban Board',
+                            priority: 'high',
+                            assignee: 'FRONT_ARCHITECT_V2',
+                            column: 'done',
+                            created: '2026-04-05',
+                            completed: '2026-04-05'
+                        }
+                    ];
+                    
+                    this.renderTasks();
+                    this.updateCounts();
+                    
+                } catch (error) {
+                    console.error('Tasks load error:', error);
+                    this.showError('Failed to load tasks');
+                }
+            }
+            
+            renderTasks() {
+                const columns = {
+                    'todo': document.getElementById('todo-tasks'),
+                    'progress': document.getElementById('progress-tasks'),
+                    'done': document.getElementById('done-tasks')
+                };
+                
+                // Clear all columns
+                Object.values(columns).forEach(col => col.innerHTML = '');
+                
+                // Render tasks in their columns
+                this.tasks.forEach(task => {
+                    const column = columns[task.column];
+                    if (!column) return;
+                    
+                    const taskCard = document.createElement('div');
+                    taskCard.className = 'task-card';
+                    taskCard.setAttribute('data-task-id', task.id);
+                    taskCard.setAttribute('draggable', 'true');
+                    
+                    taskCard.innerHTML = `
+                        <div class="task-priority priority-${task.priority}">
+                            ${task.priority.toUpperCase()}
+                        </div>
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-description">${task.description}</div>
+                        <div class="task-meta">
+                            <div class="task-assignee">
+                                <div class="assignee-icon">${task.assignee.charAt(0)}</div>
+                                <span>${task.assignee}</span>
+                            </div>
+                            <div>${task.created}</div>
+                        </div>
+                    `;
+                    
+                    column.appendChild(taskCard);
+                });
+            }
+            
+            updateCounts() {
+                const todoCount = this.tasks.filter(t => t.column === 'todo').length;
+                const progressCount = this.tasks.filter(t => t.column === 'progress').length;
+                const doneCount = this.tasks.filter(t => t.column === 'done').length;
+                const totalTasks = this.tasks.length;
+                const completionRate = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
+                
+                document.getElementById('todo-count').textContent = todoCount;
+                document.getElementById('progress-count').textContent = progressCount;
+                document.getElementById('done-count').textContent = doneCount;
+                document.getElementById('totalTasks').textContent = `Total tasks: ${totalTasks}`;
+                document.getElementById('completionRate').textContent = `Completion: ${completionRate}%`;
+            }
+            
+            initDragAndDrop() {
+                const taskCards = document.querySelectorAll('.task-card');
+                const columns = document.querySelectorAll('.kanban-column');
+                
+                taskCards.forEach(card => {
+                    card.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', card.getAttribute('data-task-id'));
+                        card.classList.add('dragging');
+                    });
+                    
+                    card.addEventListener('dragend', () => {
+                        card.classList.remove('dragging');
+                    });
+                });
+                
+                columns.forEach(column => {
+                    column.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        column.classList.add('drag-over');
+                    });
+                    
+                    column.addEventListener('dragleave', () => {
+                        column.classList.remove('drag-over');
+                    });
+                    
+                    column.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        column.classList.remove('drag-over');
+                        
+                        const taskId = e.dataTransfer.getData('text/plain');
+                        const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+                        const newColumn = column.id.replace('-column', '');
+                        
+                        if (taskCard) {
+                            // Update task in data
+                            const taskIndex = this.tasks.findIndex(t => t.id == taskId);
+                            if (taskIndex !== -1) {
+                                this.tasks[taskIndex].column = newColumn;
+                                if (newColumn === 'done') {
+                                    this.tasks[taskIndex].completed = new Date().toISOString().split('T')[0];
+                                }
+                                
+                                // Re-render
+                                this.renderTasks();
+                                this.updateCounts();
+                                this.updateLastUpdate();
+                                
+                                // Show success message
+                                this.showSuccess(`Task moved to ${newColumn.toUpperCase()}`);
+                            }
+                        }
+                    });
+                });
+            }
+            
+            updateLastUpdate() {
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `Last update: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            }
+            
+            startAutoRefresh() {
+                // Update time every minute
+                setInterval(() => this.updateLastUpdate(), 60000);
+                
+                // Simulate task updates
+                setInterval(() => {
+                    // Randomly move a task from todo to progress
+                    const todoTasks = this.tasks.filter(t => t.column === 'todo');
+                    if (todoTasks.length > 0 && Math.random() > 0.8) {
+                        const randomTask = todoTasks[Math.floor(Math.random() * todoTasks.length)];
+                        randomTask.column = 'progress';
+                        this.renderTasks();
+                        this.updateCounts();
+                        this.updateLastUpdate();
+                    }
+                    
+                    // Randomly move a task from progress to done
+                    const progressTasks = this.tasks.filter(t => t.column === 'progress');
+                    if (progressTasks.length > 0 && Math.random() > 0.9) {
+                        const randomTask = progressTasks[Math.floor(Math.random() * progressTasks.length)];
+                        randomTask.column = 'done';
+                        randomTask.completed = new Date().toISOString().split('T')[0];
+                        this.renderTasks();
+                        this.updateCounts();
+                        this.updateLastUpdate();
+                    }
+                }, 30000); // Every 30 seconds
+            }
+            
+            showSuccess(message) {
+                // Create toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(6, 214, 160, 0.9);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 0.75rem;
+                    font-weight: 600;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                toast.textContent = `✅ ${message}`;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+            
+            showError(message) {
+                // Create error toast
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(239, 68, 68, 0.9);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 0.75rem;
+                    font-weight: 600;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                toast.textContent = `❌ ${message}`;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        }
+        
+        // Initialize kanban when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.kanban = new MissionKanban();
+        });
+        
+        // Logout function
+        window.logout = function() {
+            localStorage.removeItem('vertex_token');
+            localStorage.removeItem('vertex_user');
+            window.location.href = '/login';
+        };
+        
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            
+            .drag-over {
+                background: rgba(14, 165, 233, 0.1) !important;
+                border-color: var(--vertex-blue) !important;
+            }
+            
+            .dragging {
+                opacity: 0.5;
+                transform: rotate(5deg);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

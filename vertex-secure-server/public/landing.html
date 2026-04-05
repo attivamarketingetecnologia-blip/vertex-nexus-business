@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Monitoring SaaS - Simple, Affordable API Monitoring</title>
+    <style>
+        :root {
+            --vertex-blue: #0ea5e9;
+            --vertex-purple: #8b5cf6;
+            --vertex-dark: #0f172a;
+            --vertex-surface: #1e293b;
+            --vertex-cyan: #06d6a0;
+            --vertex-amber: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Header */
+        .header {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, var(--vertex-blue) 0%, var(--vertex-purple) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--vertex-blue);
+        }
+        
+        .login-btn {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--vertex-blue);
+            color: var(--vertex-blue);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            background: var(--vertex-blue);
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+        
+        .cta-primary {
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+        }
+        
+        .cta-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: var(--vertex-blue);
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-secondary:hover {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: var(--vertex-blue);
+        }
+        
+        /* Features */
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+        
+        .feature-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--vertex-blue);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--vertex-blue);
+            font-size: 24px;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+        
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+        
+        .pricing-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--vertex-amber);
+            transform: scale(1.05);
+            position: relative;
+        }
+        
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--vertex-amber);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .pricing-card:hover {
+            border-color: var(--vertex-purple);
+            transform: translateY(-5px);
+        }
+        
+        .pricing-plan {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--vertex-blue), var(--vertex-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features li {
+            color: #94a3b8;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Signup Form */
+        .signup-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 1.5rem;
+            padding: 4rem;
+            margin-bottom: 6rem;
+            text-align: center;
+            border: 1px solid rgba(6, 214, 160, 0.2);
+        }
+        
+        .signup-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .signup-subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .signup-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vertex-blue);
+        }
+        
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--vertex-cyan), var(--vertex-blue));
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .form-submit:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 3rem 0;
+            border-top: 1px solid rgba(14, 165, 233, 0.2);
+            text-align: center;
+            color: #94a3b8;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--vertex-blue);
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .signup-section {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <div class="logo-icon">V</div>
+                    <div class="logo-text">VERTEX</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="/login" class="login-btn">Control Room</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Simple, Affordable API Monitoring</h1>
+            <p class="hero-subtitle">
+                Monitor your APIs with ease. Get instant alerts, detailed analytics, and peace of mind 
+                without breaking the bank. Built for small development teams.
+            </p>
+            <div class="cta-buttons">
+                <button class="cta-primary" onclick="scrollToSignup()">Join Waitlist (Free)</button>
+                <a href="#features" class="cta-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="container">
+        <h2 class="section-title">Why Choose Our API Monitoring?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Real-time Monitoring</h3>
+                <p class="feature-desc">
+                    Get instant alerts when your APIs go down. Monitor response times, error rates, 
+                    and uptime in real-time.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3 class="feature-title">Smart Alerts</h3>
+                <p class="feature-desc">
+                    Receive notifications via email, SMS, or Slack. Customize alert thresholds 
+                    and escalation policies.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Detailed Analytics</h3>
+                <p class="feature-desc">
+                    Understand your API performance with beautiful dashboards and 
+                    historical data analysis.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Team Collaboration</h3>
+                <p class="feature-desc">
+                    Invite your team members, assign incidents, and collaborate 
+                    on resolving API issues together.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3 class="feature-title">Easy Integration</h3>
+                <p class="feature-desc">
+                    Set up monitoring in 5 minutes. No complex configuration needed. 
+                    Works with REST, GraphQL, and more.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">Affordable Pricing</h3>
+                <p class="feature-desc">
+                    Start free, grow as you need. Transparent pricing without hidden fees. 
+                    Perfect for startups and small teams.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="container">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-plan">FREE</div>
+                <div class="pricing-price">$0</div>
+                <ul class="pricing-features">
+                    <li>3 API Endpoints</li>
+                    <li>Basic Monitoring</li>
+                    <li>Email Alerts</li>
+                    <li>7-day History</li>
+                    <li>Community Support</li>
+                </ul>
+                <button class="cta-secondary" onclick="scrollToSignup()">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-plan">STARTER</div>
+                <div class="pricing-price">$29</div>
+                <div style="color: #94a3b8; margin-bottom: 1rem;">per month</div>
+                <ul class="pricing-features">
+                    <li>10 API Endpoints</li>
+                    <li>All Free Features</li>
+                    <li>SMS Alerts</li>
+                    <li>30-day History</li>
+                    <li>Team Access (3 users)</li>
+                    <li>Priority Support</li>
+                </ul>
+                <button class="cta-primary" onclick="scrollToSignup()">Join Waitlist</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-plan">PRO</div>
+                <div class="pricing-price">$99</div>
+                <div style="color: #94a3b8; margin-bottom: 1rem;">per
