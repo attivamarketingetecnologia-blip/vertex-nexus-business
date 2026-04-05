@@ -1,0 +1,49 @@
+# OpenClaw sensitive files
+.openclaw/openclaw.json
+.openclaw/agents/**/sessions/*.jsonl
+.openclaw/agents/**/sessions/*.lock
+.openclaw/agents/**/agent/config.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Secrets
+*.key
+*.pem
+*.crt
+*.secret
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Large binary files
+*.zip
+*.tar.gz
+*.rar
+
+# Backup files
+*.bak
+*.backup
+
+# Local overrides
+local.*
+override.*
